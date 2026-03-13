@@ -27,4 +27,12 @@ func Setup(app *fiber.App) {
 	sm.Get("/:id", smHandler.GetByID)
 	sm.Put("/:id", smHandler.Update)
 	sm.Delete("/:id", smHandler.Delete)
+
+	// Chats
+	chatRepo := repositories.NewChatRepository(database.DB)
+	chatHandler := handlers.NewChatHandler(chatRepo)
+
+	chats := api.Group("/chats")
+	chats.Get("/", chatHandler.List)
+	chats.Get("/:id/users", chatHandler.ListUsers)
 }
