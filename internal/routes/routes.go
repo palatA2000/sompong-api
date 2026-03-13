@@ -3,6 +3,7 @@ package routes
 import (
 	"sompong-api/internal/database"
 	"sompong-api/internal/handlers"
+	"sompong-api/internal/middleware"
 	"sompong-api/internal/repositories"
 	"sompong-api/internal/services"
 
@@ -16,12 +17,15 @@ func Setup(app *fiber.App) {
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
 
+	// Protected routes (require LINE access token)
+	protected := api.Group("/", middleware.LIFFAuth())
+
 	// Scheduled Messages
 	smRepo := repositories.NewScheduledMessageRepository(database.DB)
 	smService := services.NewScheduledMessageService(smRepo)
 	smHandler := handlers.NewScheduledMessageHandler(smService)
 
-	sm := api.Group("/scheduled-messages")
+	sm := protected.Group("/scheduled-messages")
 	sm.Post("/", smHandler.Create)
 	sm.Get("/", smHandler.List)
 	sm.Get("/:id", smHandler.GetByID)
@@ -32,7 +36,7 @@ func Setup(app *fiber.App) {
 	chatRepo := repositories.NewChatRepository(database.DB)
 	chatHandler := handlers.NewChatHandler(chatRepo)
 
-	chats := api.Group("/chats")
+	chats := protected.Group("/chats")
 	chats.Get("/", chatHandler.List)
 	chats.Get("/:id/users", chatHandler.ListUsers)
 }

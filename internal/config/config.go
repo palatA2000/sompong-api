@@ -8,13 +8,14 @@ import (
 )
 
 type Config struct {
-	AppPort string
-	DBHost  string
-	DBPort  string
-	DBUser  string
-	DBPass  string
-	DBName  string
-	DBSSL   string
+	AppPort     string
+	DBHost      string
+	DBPort      string
+	DBUser      string
+	DBPass      string
+	DBName      string
+	DBSSL       string
+	CORSOrigins string
 }
 
 var App *Config
@@ -23,13 +24,14 @@ func Load() {
 	_ = godotenv.Load()
 
 	App = &Config{
-		AppPort: getEnv("APP_PORT", "3000"),
-		DBHost:  getEnv("DB_HOST", "localhost"),
-		DBPort:  getEnv("DB_PORT", "5432"),
-		DBUser:  getEnv("DB_USER", "postgres"),
-		DBPass:  getEnv("DB_PASSWORD", "password"),
-		DBName:  getEnv("DB_NAME", "sompong_db"),
-		DBSSL:   getEnv("DB_SSLMODE", "disable"),
+		AppPort:     getEnv("APP_PORT", "3000"),
+		DBHost:      getEnv("DB_HOST", "localhost"),
+		DBPort:      getEnv("DB_PORT", "5432"),
+		DBUser:      getEnv("DB_USER", "postgres"),
+		DBPass:      getEnv("DB_PASSWORD", "password"),
+		DBName:      getEnv("DB_NAME", "sompong_db"),
+		DBSSL:       getEnv("DB_SSLMODE", "disable"),
+		CORSOrigins: getEnv("CORS_ORIGINS", "*"),
 	}
 }
 
