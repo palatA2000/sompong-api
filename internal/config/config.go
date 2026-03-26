@@ -3,19 +3,25 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	AppPort     string
-	DBHost      string
-	DBPort      string
-	DBUser      string
-	DBPass      string
-	DBName      string
-	DBSSL       string
-	CORSOrigins string
+	AppPort         string
+	DBHost          string
+	DBPort          string
+	DBUser          string
+	DBPass          string
+	DBName          string
+	DBSSL           string
+	CORSOrigins     string
+	QuizAPIKey      string
+	QuizChoiceCount int
+	GeminiAPIKey    string
+	GeminiModel     string
+	GeminiBaseURL   string
 }
 
 var App *Config
@@ -24,14 +30,19 @@ func Load() {
 	_ = godotenv.Load()
 
 	App = &Config{
-		AppPort:     getEnv("APP_PORT", "3000"),
-		DBHost:      getEnv("DB_HOST", "localhost"),
-		DBPort:      getEnv("DB_PORT", "5432"),
-		DBUser:      getEnv("DB_USER", "postgres"),
-		DBPass:      getEnv("DB_PASSWORD", "password"),
-		DBName:      getEnv("DB_NAME", "sompong_db"),
-		DBSSL:       getEnv("DB_SSLMODE", "disable"),
-		CORSOrigins: getEnv("CORS_ORIGINS", "*"),
+		AppPort:         getEnv("APP_PORT", "3000"),
+		DBHost:          getEnv("DB_HOST", "localhost"),
+		DBPort:          getEnv("DB_PORT", "5432"),
+		DBUser:          getEnv("DB_USER", "postgres"),
+		DBPass:          getEnv("DB_PASSWORD", "password"),
+		DBName:          getEnv("DB_NAME", "sompong_db"),
+		DBSSL:           getEnv("DB_SSLMODE", "disable"),
+		CORSOrigins:     getEnv("CORS_ORIGINS", "*"),
+		QuizAPIKey:      getEnv("QUIZ_API_KEY", ""),
+		QuizChoiceCount: getEnvInt("QUIZ_CHOICE_COUNT", 4),
+		GeminiAPIKey:    getEnv("GEMINI_API_KEY", ""),
+		GeminiModel:     getEnv("GEMINI_MODEL", "gemini-1.5-flash"),
+		GeminiBaseURL:   getEnv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta"),
 	}
 }
 
@@ -45,6 +56,15 @@ func (c *Config) DSN() string {
 func getEnv(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
+	}
+	return fallback
+}
+
+func getEnvInt(key string, fallback int) int {
+	if v := os.Getenv(key); v != "" {
+		if parsed, err := strconv.Atoi(v); err == nil {
+			return parsed
+		}
 	}
 	return fallback
 }
