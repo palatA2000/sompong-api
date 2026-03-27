@@ -151,7 +151,7 @@ func (s *quizService) generateQuestionWithGemini(ctx context.Context, choiceCoun
 		return nil, err
 	}
 
-	url := fmt.Sprintf("%s/models/%s:generateContent?key=%s", strings.TrimRight(config.App.GeminiBaseURL, "/"), config.App.GeminiModel, config.App.GeminiAPIKey)
+	url := fmt.Sprintf("%s/models/%s:generateContent?key=%s", strings.TrimRight(config.App.GeminiBaseURL, "/"), config.App.Gemini3Model, config.App.GeminiAPIKey)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(buf))
 	if err != nil {
 		return nil, err
@@ -198,12 +198,14 @@ func (s *quizService) generateQuestionWithGemini(ctx context.Context, choiceCoun
 
 func buildGeminiPrompt(choiceCount int) string {
 	return fmt.Sprintf(
-		"You are creating a Thai music emoji guessing game."+
-			"First choose a popular Thai song, then convert its title into 2-5 emojis."+
-			"Create 4 choices including the correct one."+
-			"Make sure emojis logically match the song title. Return ONLY valid JSON. "+
+		"You are a professional Thai music trivia engine. Create one challenge for a Thai song emoji guessing game."+
+			"Select a highly recognizable Thai song (Pop, Rock, or Indie)."+
+			"Convert the song title into 2-5 emojis that logically represent the words or the literal meaning of the title."+
+			"Generate 4 choices in Thai. The 3 distractors must be real Thai song titles that are within the same genre or era as the correct one to ensure difficulty."+
+			"Ensure 'correct_index' matches the position of the correct answer in the 'choices' array (0-based)."+
+			"Output Format: Return ONLY a strictly valid JSON object. No markdown, no prose."+
 			"Schema: {\"emoji\": string, \"question\": string, \"choices\": string[%d], \"correct_index\": number}. "+
-			"Rules: question must ask to guess the word from the emoji. choices must be Thai words. correct_index is 0-based. No extra text.",
+			"Constraints: The 'question' field must always be 'เพลงนี้คือเพลงอะไร?'. 'choices' must contain exactly 4 Thai song titles. Emojis must be clear and not overly obscure.",
 		choiceCount,
 	)
 }

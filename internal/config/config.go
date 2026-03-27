@@ -21,6 +21,7 @@ type Config struct {
 	QuizChoiceCount int
 	GeminiAPIKey    string
 	GeminiModel     string
+	Gemini3Model    string
 	GeminiBaseURL   string
 }
 
@@ -41,7 +42,8 @@ func Load() {
 		QuizAPIKey:      getEnv("QUIZ_API_KEY", ""),
 		QuizChoiceCount: getEnvInt("QUIZ_CHOICE_COUNT", 4),
 		GeminiAPIKey:    getEnv("GEMINI_API_KEY", ""),
-		GeminiModel:     getEnv("GEMINI_MODEL", "gemini-1.5-flash"),
+		GeminiModel:     getEnv("GEMINI_MODEL", "gemini-2.5-flash"),
+		Gemini3Model:    getEnv("GEMINI_3_MODEL", "gemini-3.1-flash-lite-preview"),
 		GeminiBaseURL:   getEnv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta"),
 	}
 }
